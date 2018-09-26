@@ -1,0 +1,16 @@
+HOTMAIL:
+pruebadeclon@hotmail.com
+Passwordseguridad123
+
+FACEBOOK:
+pruebadeclon@hotmail.com
+root123
+
+HOSTINGER:
+pruebadeclon@hotmail.com
+Passwordseguridad123
+
+BD:
+clon
+clon
+root123
