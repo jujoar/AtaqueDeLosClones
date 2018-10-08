@@ -8,11 +8,6 @@ Es necesario realizar una prueba de estrés para ello debe crear una herramienta
 `$ python3 stress.py -n [# hilos] -r [# repeticiones] -u [url]`
 
 
-**Tabla de Contenidos**
-
-
-[TOC]
-
 #### Ambiente de desarrollo
 
 El ataque DoS se desarrolló en el leguaje python3 utilizando las bibliotecas socks y sockets para la elaboración de los sockets que se utilizarán para realizar las consultas y la biblioteca threading para crear los hilos que ejecutan la consulta.
